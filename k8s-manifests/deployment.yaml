@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: self-healing-app
+  labels:
+    app: self-healing
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: self-healing
+  template:
+    metadata:
+      labels:
+        app: self-healing
+    spec:
+      containers:
+        - name: self-healing-app
+          image: tylermac92/self-healing-app:latest
+          ports:
+            - containerPort: 8000
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 10

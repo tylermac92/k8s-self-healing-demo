@@ -1,0 +1,11 @@
+{{- if and .Values.pdb (hasKey .Values.pdb "enabled") (eq .Values.pdb.enabled true) }}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "self-healing-app.fullname" . }}-pdb
+spec:
+  minAvailable: {{ .Values.pdb.minAvailable }}
+  selector:
+    matchLabels:
+      app: {{ include "self-healing-app.name" . }}
+{{- end }}

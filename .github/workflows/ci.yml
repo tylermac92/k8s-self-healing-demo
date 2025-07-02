@@ -1,0 +1,45 @@
+name: CI Checks
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  lint-terraform:
+    name: 🔍 Lint Terraform
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: terraform
+
+    steps:
+      - name: ⬇️ Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Install TFLint
+        uses: terraform-linters/setup-tflint@v4
+        with:
+          tflint_version: latest
+
+      - name: 🧪 Run TFLint
+        run: tflint --init && tflint --recursive
+
+  validate-k8s:
+    name: ✅ Validate K8s Manifests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: ⬇️ Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Install kubeval
+        run: |
+          curl -sLO https://github.com/instrumenta/kubeval/releases/latest/download/kubeval-linux-amd64.tar.gz
+          tar -xzf kubeval-linux-amd64.tar.gz
+          sudo mv kubeval /usr/local/bin/
+
+      - name: 🔍 Validate Kubernetes YAML
+        run: |
+          kubeval --strict --ignore-missing-schemas $(find helm/ -name '*.yaml')
