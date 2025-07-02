@@ -46,7 +46,7 @@ jobs:
           kubeval --strict --ignore-missing-schemas rendered.yaml
 
   docker-build-test:
-    name: 🐳 Build & Test Docker Image
+    name: 🐳 Build, Test & Push Docker Image
     runs-on: ubuntu-latest
 
     steps:
