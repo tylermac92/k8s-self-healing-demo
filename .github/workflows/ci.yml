@@ -40,6 +40,8 @@ jobs:
           tar -xzf kubeval-linux-amd64.tar.gz
           sudo mv kubeval /usr/local/bin/
 
-      - name: 🔍 Validate Kubernetes YAML
+      - name: 🧪 Render Helm Templates & Validate
         run: |
-          kubeval --strict --ignore-missing-schemas $(find helm/ -name '*.yaml')
+          helm template self-healing-demo ./helm/self-healing-app -f ./helm/self-healing-app/values.yaml > rendered.yaml
+          kubeval --strict --ignore-missing-schemas rendered.yaml
+
